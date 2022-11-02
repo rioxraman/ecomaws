@@ -1,54 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-
+import './App.scss';
 import Category from './components/Category';
-
+import CategoryProduct from './components/CategoryProduct';
+import { getCategories, getProducts } from "./fetcher";
 function App() {
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState({ errorMessage: "", data: [], });
+  const [products, setProducts] = useState({errorMessage:"",data: []});
 
-  useEffect(() =>{
-    fetch("http://localhost:3001/categories")
-    .then(response => response.json())
-    .then(data =>{
-      console.log(data);
-      setCategories(data)
-    })
-  },[]);
+  useEffect(() => {
+    const fetchData = async () => {
+        const responseObject = await getCategories();
+        setCategories(responseObject);
+    };
+    fetchData();
+}, []);
+
   
   const handleCateogryClick =id =>{
-     fetch("http://localhost:3001/products/?catId=" + id)
-    .then(response => response.json())
-    .then(data =>{
-      console.log(data);
-      setProducts(data)
-    })
+    const fetchData = async () => {
+      const responseObject = await getProducts(id);
+      setProducts(responseObject);
+  };
+  fetchData();
   }
 
   const renderCategories=()=>{
-    return categories.map(c =>
+    return categories.data.map(c =>
       <Category key ={c.id} id={c.id} title={c.title}  onCategoryClick={()=>handleCateogryClick(c.id)}  />
       )
   }
   
   const renderProducts=()=>{
-    return products.map(p =>
-      <div> {p.title}  </div>
-      )
+    return products.data.map(p =><CategoryProduct {...p} key={p.id}>{p.title}</CategoryProduct>);
   }
   return (
     <>
-    <header>My store</header>
+    <header>My Store</header>
     <section>
 
       <nav>
-      {categories &&  renderCategories()}
+        {categories.errorMessage && <div>error: {categories.errorMessage}</div>}
+      {categories.data &&  renderCategories()}
 
       </nav>
-      <article>
+      <main>
         <h1>Products</h1>
-        {products &&  renderProducts()}
-      </article>
+        {products.data &&  renderProducts()}
+      </main>
     </section>
     <footer>
       Footer
