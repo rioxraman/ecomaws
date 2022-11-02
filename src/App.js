@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import './App.scss';
-import Category from './components/Category';
-import CategoryProduct from './components/CategoryProduct';
-import { getCategories, getProducts } from "./fetcher";
+// import './App.scss';
+import { Home , Category,CategoryProduct, ProductDetail,Basket,Checkout,OrderConfirmation,Layout  }from "./components";
+import { BrowserRouter,  Routes, Route } from 'react-router-dom';
+import { getCategories } from "./fetcher";
 function App() {
   const [categories, setCategories] = useState({ errorMessage: "", data: [], });
-  const [products, setProducts] = useState({errorMessage:"",data: []});
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,41 +17,35 @@ function App() {
 }, []);
 
   
-  const handleCateogryClick =id =>{
-    const fetchData = async () => {
-      const responseObject = await getProducts(id);
-      setProducts(responseObject);
-  };
-  fetchData();
-  }
+  // const handleCateogryClick =id =>{
+  //   const fetchData = async () => {
+  //     const responseObject = await getProducts(id);
+  //     setProducts(responseObject);
+  // };
+  // fetchData();
+  // }
 
-  const renderCategories=()=>{
-    return categories.data.map(c =>
-      <Category key ={c.id} id={c.id} title={c.title}  onCategoryClick={()=>handleCateogryClick(c.id)}  />
-      )
-  }
+  // const renderCategories=()=>{
+  //   return categories.data.map(c =>
+  //     <li key ={c.id}> <Link to={`/categories/${c.id}`}>{c.title}</Link> </li>
+      
+  //     )
+  // }
   
-  const renderProducts=()=>{
-    return products.data.map(p =><CategoryProduct {...p} key={p.id}>{p.title}</CategoryProduct>);
-  }
+  
   return (
     <>
-    <header>My Store</header>
-    <section>
-
-      <nav>
-        {categories.errorMessage && <div>error: {categories.errorMessage}</div>}
-      {categories.data &&  renderCategories()}
-
-      </nav>
-      <main>
-        <h1>Products</h1>
-        {products.data &&  renderProducts()}
-      </main>
-    </section>
-    <footer>
-      Footer
-    </footer>
+        <BrowserRouter>
+          <Routes>
+          <Route path = "/" element = {<Layout categories={categories} />} >
+          <Route index element = {<Home />} />
+          <Route path = "basket" element = {<Basket />} />
+          <Route path = "checkout" element = {<Checkout />} />
+          <Route path = "products/:productId" element = {<ProductDetail />} />
+          <Route path = "categories/:categoryId" element = {<Category />} />
+          </Route>
+          </Routes>
+        </BrowserRouter>
     </>
   );
 }
