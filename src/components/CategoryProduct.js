@@ -1,6 +1,67 @@
+
+import React from 'react'
+import { Link, useNavigate } from "react-router-dom";
+
+const CategoryProduct = ({id, title, image, specs,features,price,stock}) => {
+    const navigate = useNavigate();
+    // const { addProduct } = useContext(CartContext);
+  return (
+    <article>
+    <div className='category-product-title'>
+       <Link to={`products\${id}`}>{title}</Link>
+    </div>
+    <figure>
+        <div className='category-product-image-container'>
+            <img src={`./assets/${image}`} alt={title} />
+        </div>
+    </figure>
+    <aside>
+        <div className='category-product-image-dimensions'>
+            <h3>Dimensions</h3>
+            <label>{specs.dimensions}</label>
+        </div >
+        {specs.capacity &&
+        <div className='category-product-image-capacity'>
+            <h3>Capacity</h3>
+            <label>{specs.capacity}</label>
+        </div >}
+
+        <div className='category-product-info-features'>
+        <h3>Features</h3>
+                    <ul>
+                        {features?.map((f, i) => {
+                            return <li key={`feature${i}`}>{f}</li>;
+                        })}
+                    </ul>
+                </div>
+     </aside>
+
+     <aside className='category-product-finance'>
+                <div className='category-product-finance-'>
+                    Rs:{price*84}
+                </div >
+
+                <div  className='category-product-info-stock'  >
+                    <label>Stock Level: {stock}</label>
+                    <label>FREE Delivery</label>
+                </div >
+                           
+                <div className='category-product-action'>
+                    <button onClick={() => navigate(`/products/${id}`)}>
+                        View Product
+                    </button >
+                    <button  >Add to Basket</button>
+                </div>
+            </aside>
+    </article>
+  )
+}
+
+export default CategoryProduct;
+//onClick={() => addProduct({id, title, price})}
 // import React, { useContext } from "react";
 
-// import { Link, useNavigate } from "react-router-dom";
+
 // import styled from 'styled-components';
 
 // import { CartContext } from "../contexts/cartContext";
@@ -88,61 +149,3 @@
 //     padding-top: 10px;
 // `;
 // import { specialChars } from '@testing-library/user-event'
-import React from 'react'
-
-const CategoryProduct = ({title, image, specs,features,price,stock}) => {
-  return (
-    <article>
-    <div className='category-product-title'>
-        {title}
-    </div>
-    <figure>
-        <div className='category-product-image-container'>
-            <img src={`./assets/${image}`} alt={title} />
-        </div>
-    </figure>
-    <aside>
-        <div className='category-product-image-dimensions'>
-            <h3>Dimensions</h3>
-            <label>{specs.dimensions}</label>
-        </div >
-        {specs.capacity &&
-        <div className='category-product-image-capacity'>
-            <h3>Capacity</h3>
-            <label>{specs.capacity}</label>
-        </div >}
-
-        <div className='category-product-info-features'>
-        <h3>Features</h3>
-                    <ul>
-                        {features?.map((f, i) => {
-                            return <li key={`feature${i}`}>{f}</li>;
-                        })}
-                    </ul>
-                </div>
-     </aside>
-
-     <aside className='category-product-finance'>
-                <div className='category-product-finance-'>
-                    Rs:{price*84}
-                </div >
-
-                <div  className='category-product-info-stock'  >
-                    <label>Stock Level: {stock}</label>
-                    <label>FREE Delivery</label>
-                </div >
-                           { /* onClick={() => navigate(`/products/${id}`)}
-                           onClick={() => addProduct({id, title, price})}
-*/}
-                <div className='category-product-action'>
-                    <button >
-                        View Product
-                    </button>
-                    <button >Add to Basket</button>
-                </div>
-            </aside>
-    </article>
-  )
-}
-
-export default CategoryProduct;
