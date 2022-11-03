@@ -2,7 +2,7 @@ import React from "react";
 
 import { Outlet, Link } from "react-router-dom";
 
-// import { HomeIcon, CartIcon } from "./icons";
+import { HomeIcon, CartIcon } from "./icons";
 // import Search from "./search";
 
 const Layout = ({ categories }) => {
@@ -17,14 +17,14 @@ const Layout = ({ categories }) => {
     return (
         <>
             <header>
-                <div >
-                    <Link to="/"></Link>
+                <div id="headerHomeIcon">
+                    <Link to="/"><HomeIcon width={40} /></Link>
                 </div>
-                
+                {/* <Search /> */}
 
-                <div >Our Store</div>
-                <div >
-                    <Link to="/basket"></Link>
+                <div id="headerTitle">Our Store</div>
+                <div id="headerCartIcon">
+                    <Link to="/basket"><CartIcon width={40} /></Link>
                 </div>
             </header>
             <section>
