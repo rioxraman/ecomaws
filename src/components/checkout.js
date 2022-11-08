@@ -1,213 +1,159 @@
-import React from "react";
+import React, { useContext } from "react";
 
-import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom";
+import styled from 'styled-components';
 
-import { useNavigate } from "react-router-dom";
+import { CartContext } from "../contexts/cartContext";
 
-const Checkout = () => {
+
+
+const CategoryProduct = ({
+    id,
+    title,
+    image,
+    specs,
+    features,
+    price,
+    stock,
+}) => {
     const navigate = useNavigate();
-    const [form, setForm] = React.useState({
-        name: "",
-        email: "",
-        shippingAddress1: "",
-
-        touched: {
-            email: false,
-            password: false,
-            shippingAddress1: false
-        },
-    });
-
-    const errors = {
-        name: form.name.length === 0,
-        email: form.email.length === 0,
-        shippingAddress1: form.shippingAddress1.length === 0,
-    };
-    const disabled = Object.keys(errors).some((x) => errors[x]);
-
-    const handleChange = (ev) => {
-        const { name, value } = ev.target;
-
-        setForm((prevState) => {
-            return {
-                ...prevState,
-                [name]: value,
-            };
-        });
-    };
-
-    const handleBlur = (ev) => {
-        const { name } = ev.target;
-        setForm((prevState) => {
-            return {
-                ...prevState,
-                touched: { ...form.touched, [name]: true },
-            };
-        });
-    };
-
-    const handleSubmit = (ev) => {
-        if (disabled) {
-            ev.preventDefault();
-            return;
-        }
-        navigate("/orderconfirmation");
-    };
-
-    const showError = (field) => (errors[field] ? form.touched[field] : false);
+    const { addProduct } = useContext(CartContext);
 
     return (
-        <form onSubmit={handleSubmit}>
-            <CheckoutContainer>
-                {/* Row 1 */}
-                <CheckoutTitle>Shopping Checkout</CheckoutTitle>
+        <ProductInfoArticle>
+            <ProductTitle>
+                <Link to={`/products/${id}`}>{title}</Link>
+            </ProductTitle>
 
-                {/* Row 4 */}
-                <CheckoutHeader>
-                    <h4>Your Details</h4>
-                </CheckoutHeader>
+            <figure>
+                <ProductImageContainer>
+                    <ProductImage src={`/assets/${image}`} alt={title} />
+                </ProductImageContainer>
+            </figure>
 
-                {/* Row 5 */}
-                <CheckoutHeaderLine />
+            <aside>
+                <ProductInfo>
+                    <ProductInfoHeader>Dimensions</ProductInfoHeader>
+                    <label>{specs.dimensions}</label>
+                </ProductInfo>
 
-                {/* Row 6 */}
-                <CheckoutTable>
-                    <CheckoutFormLabel>Name</CheckoutFormLabel>
-                    <CheckoutInput
-                        type="text"
-                        name="name"
-                        invalid={showError("name")}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Enter name"
-                    />
-                    <CheckoutFormLabel>Email</CheckoutFormLabel>
-                    <CheckoutInput
-                        type="text"
-                        name="email"
-                        invalid={showError("email")}
-                        onChange={handleChange}
-                        placeholder="Enter email"
-                    />
-                </CheckoutTable>
+                {specs.capacity && (
+                    <ProductInfo>
+                        <ProductInfoHeader>Capacity</ProductInfoHeader>
+                        <label>{specs.capacity}</label>
+                    </ProductInfo>
+                )}
 
-                {/* Row 7 */}
-                <CheckoutHeader>
-                    <h4>Address Details</h4>
-                </CheckoutHeader>
+                <ProductInfo>
+                    <ProductInfoHeader>Features</ProductInfoHeader>
+                    <ul>
+                        {features?.map((f, i) => {
+                            return <ProductInfoListItem key={`feature${i}`}>{f}</ProductInfoListItem>;
+                        })}
+                    </ul>
+                </ProductInfo>
+            </aside>
 
-                {/* Row 8 */}
-                <CheckoutHeaderLine />
+            <aside>
+                <ProductInfoFinancePrice>
+                    &pound;{price}
+                </ProductInfoFinancePrice>
 
-                {/* Row 9 */}
-                <CheckoutTable>
-                    <CheckoutFormLabel>Copy to shipping</CheckoutFormLabel>
-                    <CheckoutFormCheckbox type="checkbox" />
+                <ProductInfoStock>
+                    <ProductInfoStockLabel>Stock Level: {stock}</ProductInfoStockLabel>
+                    <ProductInfoStockLabel>FREE Delivery</ProductInfoStockLabel>
+                </ProductInfoStock>
 
-                    <CheckoutFormLabel>Billing Address</CheckoutFormLabel>
-
-                    <CheckoutAddress>
-                        <input
-                            type="text"
-                            name="billingAddress1"
-                        />
-                        <input type="text" name="billingAddress2" />
-                        <input type="text" name="billingCity" />
-                    </CheckoutAddress>
-
-                    <CheckoutFormLabel>Shipping Address</CheckoutFormLabel>
-
-                    <CheckoutAddress>
-                        <CheckoutInput
-                            type="text"
-                            name="shippingAddress1"
-                            invalid={showError("shippingAddress1")}
-                            placeholder="Enter first address line"
-                        />
-                        <input type="text" name="shippingAddress2" />
-                        <input type="text" name="shippingCity" />
-                    </CheckoutAddress>
-                </CheckoutTable>
-
-                <CancelButton onClick={() => navigate("/basket")}>
-                    Cancel
-                </CancelButton>
-
-                <CheckoutButton disabled={disabled}>
-                    Confirm Order
-                </CheckoutButton>
-            </CheckoutContainer>
-        </form>
+                <ProductInfoAction>
+                    <ProductInfoActionButton onClick={() => navigate(`/products/${id}`)}>
+                        View Product
+                    </ProductInfoActionButton>
+                    <ProductInfoActionButton onClick={() => addProduct({id, title, price})}>Add to Basket</ProductInfoActionButton>
+                </ProductInfoAction>
+            </aside>
+        </ProductInfoArticle>
     );
 };
 
-export default Checkout;
+export default CategoryProduct;
 
-const CheckoutContainer = styled.div`
+const ProductInfoArticle = styled.article`
     display: grid;
-    padding: 20px;
-    grid-template-rows: 0.25fr 1fr 0.25fr 0.25fr 0.25fr 0.5fr;
-    grid-template-columns: 0.1fr 1fr 0.1fr;
-`;
-const CheckoutTable = styled.div`
-    grid-column: 1 / span 3;
-    display: grid;
-    grid-template-rows: 0.25fr 0.25fr 0.25fr 0.25fr;
-    grid-template-columns: 0.1fr 0.4fr 0.1fr 0.4fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 0.25fr 1fr 0.25fr;
     column-gap: 20px;
+`;
+
+const ProductTitle = styled.div`
+        grid-column: 1 / span 3;
+        color: darkslategray;
+        font-weight: bold;
+        font-size: 1.5em;
+        padding-left: 10px;
+    `;
+
+const ProductImageContainer = styled.div`
+    padding: 10px;
+    width: 60%;
+`;
+
+const ProductImage = styled.img`
+    width: 100%;
+    height: 100%;
+`;
+
+const ProductInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const ProductInfoHeader = styled.h3`
+    color: darkslategray;
+    font-size: 1em;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 5px;
+`;
+
+const ProductInfoListItem = styled.li`
+    padding-top: 5px;
+`;
+
+const ProductInfoStock = styled.div`
     padding-left: 10px;
+    margin-top: 20px;
+    padding-top: 10px;
+    background-color: lightgrey;
+    height: 20%;
+    width: 30%;
+    border-radius: 5px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
 `;
 
-const CheckoutHeader = styled.div`
-    grid-column: 1 / span 3;
-    padding-top: 20px;
-`;
-const CheckoutHeaderLine = styled.hr`
-    grid-column: 1 / span 3;
-    margin-bottom: 20px;
-    border: 1px solid gray;
-`;
-const CheckoutTitle = styled.h2`
-    grid-column: 1 / span 2;
-    padding-bottom: 20px;
+const ProductInfoStockLabel = styled.label`
+    padding-bottom: 5px;
 `;
 
-const CheckoutAddress = styled.div`
-    display: grid;
-    grid-template-rows: 0.25fr 0.25fr 0.25fr 0.25fr;
-    grid-template-columns: 1fr;
-    grid-row-gap: 10px;
+const ProductInfoAction = styled.div`
+    display: flex;
+    flex-direction: column;
 `;
 
-const CheckoutFormLabel = styled.label`
-    justify-self: end;
+const ProductInfoActionButton = styled.button`
+    width: 160px;
+    height: 30px;
+    border-radius: 10px;
+    margin-top: 20px;
+    background-color: lightgray;
+    border: solid 1px slategrey;
+    font-weight: bold;
 `;
 
-const CheckoutInput = styled.input`
-    border-width: 1px;
-    border-style: solid;
-    ${(props) =>
-        props.invalid &&
-        `
-        border-color: red;
-        border-width: 3px;
-    `}
-`;
-
-const CheckoutFormCheckbox = styled.input`
-    grid-column: 2 / span 3;
-    justify-self: start;
-    margin-bottom: 20px;
-`;
-
-const CheckoutButton = styled.button`
-    border-radius: 8px;
-    height: 40px;
-    grid-column: 3;
-`;
-
-const CancelButton = styled.button`
-    border-radius: 8px;
-    height: 40px;
-    grid-column: 1;
+const ProductInfoFinancePrice = styled.div`
+    color: darkslategray;
+    font-size: 2em;
+    font-weight: bold;
+    padding-top: 10px;
 `;

@@ -1,20 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from "react-router-dom";
-import { getProductById } from '../fetcher';
+import React, { useContext } from "react";
 
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
+
+import { CartContext } from "../contexts/cartContext";
+
+import { getProductById } from "../fetcher";
+
 const ProductDetail = () => {
-    const [product, setProduct] = useState({errorMessage:"", data: {}});
-    // const params = useParams(); 
+    const { addProduct } = useContext(CartContext);;
+    const [product, setProduct] = React.useState({
+        errorMessage: "",
+        data: {},
+    });
     const { productId } = useParams();
-    
-    useEffect(()=>{
+
+    React.useEffect(() => {
         const fetchData = async () => {
-            const responseObject = await getProductById(productId);//params.productId
+            const responseObject = await getProductById(productId);
             setProduct(responseObject);
         };
         fetchData();
-    },[productId])
+    }, [productId]);
 
     const createMarkup = () => {
         return { __html: product.data?.description };
@@ -73,7 +80,17 @@ const ProductDetail = () => {
                 </ProductInfoStock>
 
                 <ProductInfoAction>
-                    Add to Basket
+                    <ProductInfoActionButton
+                        onClick={() =>
+                            addProduct({
+                                id: product.data.id,
+                                title: product.data.title,
+                                price: product.data.price,
+                            })
+                        }
+                    >
+                        Add to Basket
+                    </ProductInfoActionButton>
                 </ProductInfoAction>
             </aside>
 
@@ -154,14 +171,15 @@ const ProductInfoAction = styled.div`
     flex-direction: column;
 `;
 
-
-
-
-
-
-
-
-
+const ProductInfoActionButton = styled.button`
+    width: 160px;
+    height: 30px;
+    border-radius: 10px;
+    margin-top: 20px;
+    background-color: lightgray;
+    border: solid 1px slategrey;
+    font-weight: bold;
+`;
 
 const ProductInfoFinancePrice = styled.div`
     color: darkslategray;

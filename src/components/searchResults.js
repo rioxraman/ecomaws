@@ -38,6 +38,7 @@ const SearchResults = () => {
 
 
     return <div>
+        <h1>Gupta traders</h1>
         {products.errorMessage && <div>Error: {products.errorMessage}</div>}
 
         {renderProducts()}

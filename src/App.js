@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 // import './App.scss';
-import { Home , Category,CategoryProduct, ProductDetail,Basket,Checkout,OrderConfirmation,Layout  }from "./components";
+import { Home , Category, ProductDetail,Basket,Checkout,SearchResults,Layout  }from "./components";
 import { BrowserRouter,  Routes, Route } from 'react-router-dom';
 import { getCategories } from "./fetcher";
 function App() {
@@ -43,6 +43,7 @@ function App() {
           <Route path = "checkout" element = {<Checkout />} />
           <Route path = "products/:productId" element = {<ProductDetail />} />
           <Route path = "categories/:categoryId" element = {<Category />} />
+          <Route path="search" element={<SearchResults /> } />
           </Route>
           </Routes>
         </BrowserRouter>
